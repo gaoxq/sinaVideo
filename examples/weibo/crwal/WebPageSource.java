@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -17,8 +16,7 @@ public class WebPageSource {
 	public ArrayList<String> getMid(String Page, ArrayList<String> midList) {
 		// 使用原网页里声明的gb2312反而会出现乱码
 		// <dl class=\"feed_list\" mid=\"3624171432884749\"
-		Pattern p = Pattern.compile("\\<dl.+?\\smid=\\\"(\\d+).*?\"", Pattern.CASE_INSENSITIVE);
-		
+		Pattern p = Pattern.compile("\\<dl.+?\\smid=\\\"(\\d+).*?\"", Pattern.CASE_INSENSITIVE);		
 		Matcher m = p.matcher(Page);
 		while (m.find()) {
 			midList.add(m.group(1));
@@ -26,6 +24,16 @@ public class WebPageSource {
 		}
 		System.out.println(Page);
 		return midList;		
+	}
+	public String getLinkName(String Page, String url) {
+		//<title>请勿放弃治疗：2013 Vine短视频集锦—在线播放—优酷网，视频高清在线观看</title>
+		Pattern p = Pattern.compile("<title>(.*?)(—|_|-)", Pattern.CASE_INSENSITIVE);		
+		Matcher m = p.matcher(Page);
+		 if(m.find()) {
+			 return "E:/SinaVideo/SinaVideoDownload/"+m.group(1)+".flv";
+		}
+		 else 
+			 return url;
 	}
 	public static boolean append(String fileName, String fileContent) {
 		boolean result = false;

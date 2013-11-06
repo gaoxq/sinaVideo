@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import weibo4j.model.WeiboException;
 import weibo4j.org.json.JSONArray;
 import weibo4j.org.json.JSONObject;
+
 public class GetTimelines {
 	
 	public static void main(String[] args) {
@@ -69,7 +70,7 @@ class myclass {
 			createdAt = x.getCreatedAt();
 			id = x.getId();
 			retweetedStatus = x.getRetweetedStatus();
-			// 若此微博是转发的,则应转向被转发的位置
+			//若此微博是转发的,则应转向被转发的位置
 			if (retweetedStatus != null) {
 				
 				mid = retweetedStatus.getMid();
@@ -79,7 +80,7 @@ class myclass {
 				commentsCount = retweetedStatus.getCommentsCount();
 			}
 			
-			// 原创微博
+			//原创微博
 			else {
 				mid = x.getMid();
 				text = x.getText();
@@ -87,12 +88,13 @@ class myclass {
 				repostsCount = x.getRepostsCount();
 				commentsCount = x.getCommentsCount();
 			}
-			
+			//通过正则表达式匹配短链接
 			Pattern p = Pattern.compile("http://[\\w\\.\\-/:]+",Pattern.CASE_INSENSITIVE );
 			Matcher m = p.matcher(text);
 			if(m.find())
 			{
 				videoShortLink = m.group();
+				//将视频的短链接转换为长链接，通过json格式获取url_long
 				weibo4j.ShortUrl su = new weibo4j.ShortUrl();
 				su.client.setToken(access_token);
 				try {
@@ -105,7 +107,7 @@ class myclass {
 				}
 			}
 			
-			// 获得评论内容
+			// 获得评论内容，默认获取的数量
 			/*
 			Comments cm = new Comments();
 			cm.client.setToken(access_token);
@@ -115,6 +117,7 @@ class myclass {
 				scomment.add(c.getText()); 
 			}
 			*/
+			//获取一页评论
 			Comments cm = new Comments();
 			cm.client.setToken(access_token);
 			Paging paging = new Paging();
@@ -133,7 +136,7 @@ class myclass {
 	}
 
 	public String toString(WebPageSource find) {	
-		String result = "createdAt:" + createdAt + ",id=" + id + ",mid=" + mid
+		String result = "createdAt=" + createdAt + ",id=" + id + ",mid=" + mid
 				+ ",text=" + text + ",original_pic=" + original_pic
 				+ ",repostsCount=" + repostsCount + ",commentsCount="
 				+ commentsCount + ",VideoShortLink=" + videoShortLink + ",VideoLongLink=" + videoLongLink;
@@ -144,6 +147,7 @@ class myclass {
 			WebPageSource.append("E:/SinaVideo/status.txt", s);			
 		}
 		WebPageSource.append("E:/SinaVideo/status.txt", "\n");
+		WebPageSource.append("E:/SinaVideo/link.lst", videoLongLink);
 		return result;
 	}
 }
